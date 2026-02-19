@@ -1,12 +1,13 @@
 <template>
   <div>
-    <h2>用户管理</h2>
-    <p class="hint">用户列表、搜索、禁用/启用（禁用后该用户无法登录）</p>
+    <h2 class="page-title">用户管理</h2>
+    <p class="page-hint">用户列表、搜索、禁用/启用（禁用后该用户无法登录）</p>
     <div class="toolbar">
       <input v-model="keyword" placeholder="搜索手机号/昵称" @keyup.enter="load" />
-      <button @click="load">搜索</button>
+      <button class="btn-primary" @click="load">搜索</button>
     </div>
-    <table class="table">
+    <div class="table-wrap card-common">
+    <table class="table table-common">
       <thead>
         <tr>
           <th>ID</th>
@@ -38,6 +39,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 </template>
 
@@ -87,14 +89,14 @@ onMounted(load)
 </script>
 
 <style scoped>
-.hint { color: #718096; margin-bottom: 16px; }
-.toolbar { margin-bottom: 16px; display: flex; gap: 8px; }
-.toolbar input { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; width: 200px; }
-.toolbar button { padding: 8px 16px; background: #E53E3E; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
-.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-.table th { background: #f7fafc; color: #4a5568; font-weight: 600; }
-.btn-ok { padding: 4px 10px; background: #38a169; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
-.btn-danger { padding: 4px 10px; background: #c53030; color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-right: 6px; }
-.btn-delete { padding: 4px 10px; background: #4a5568; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+.toolbar { margin-bottom: 18px; display: flex; gap: 10px; align-items: center; }
+.toolbar input { padding: 8px 12px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); width: 200px; font-size: 0.9375rem; }
+.table-wrap { overflow-x: auto; border-radius: var(--radius); }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
+.table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 0.8125rem; }
+.table tbody tr:hover { background: #f8fafc; }
+.btn-ok { padding: 6px 12px; background: var(--success); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; }
+.btn-danger { padding: 6px 12px; background: var(--danger); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-right: 6px; font-size: 0.875rem; }
+.btn-delete { padding: 6px 12px; background: var(--text-muted); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; }
 </style>

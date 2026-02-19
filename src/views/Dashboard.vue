@@ -1,18 +1,18 @@
 <template>
   <div class="board">
-    <h2>核心数据看板</h2>
-    <p class="hint">实时数据、业务数据与趋势，支持时间段筛选</p>
+    <h2 class="page-title">核心数据看板</h2>
+    <p class="page-hint">实时数据、业务数据与趋势，支持时间段筛选</p>
 
     <div class="filter">
       <label>时间范围</label>
       <input type="date" v-model="startDate" />
       <span>至</span>
       <input type="date" v-model="endDate" />
-      <button @click="load">查询</button>
+      <button class="btn-primary" @click="load">查询</button>
     </div>
 
     <template v-if="loading">
-      <p>加载中...</p>
+      <p class="loading-tip">加载中…</p>
     </template>
     <template v-else-if="data.realtime">
       <section class="section">
@@ -104,21 +104,22 @@ onMounted(load)
 </script>
 
 <style scoped>
-.hint { color: #718096; margin-bottom: 16px; }
-.filter { margin-bottom: 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.filter label { margin-right: 4px; }
-.filter input[type="date"] { padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
-.filter button { padding: 8px 16px; background: #E53E3E; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.filter { margin-bottom: 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.filter label { margin-right: 4px; font-size: 0.875rem; color: var(--text-muted); }
+.filter input[type="date"] { padding: 8px 12px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); font-size: 0.875rem; }
+.filter span { color: var(--text-muted); font-size: 0.875rem; }
+.loading-tip { color: var(--text-muted); margin: 24px 0; }
 .section { margin-bottom: 32px; }
-.section h3 { font-size: 1rem; color: #4a5568; margin-bottom: 12px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
-.card { background: #fff; padding: 16px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-.card.link { cursor: pointer; }
-.card.link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-.card .label { display: block; color: #718096; font-size: 0.75rem; }
-.card .value { font-size: 1.25rem; font-weight: 600; color: #E53E3E; }
-.trend-table-wrap { overflow-x: auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); max-height: 400px; overflow-y: auto; }
+.section h3 { font-size: 0.9375rem; font-weight: 600; color: var(--text); margin-bottom: 14px; }
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
+.card { background: var(--card-bg); padding: 18px; border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); }
+.card.link { cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s; }
+.card.link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--accent); }
+.card .label { display: block; color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 4px; }
+.card .value { font-size: 1.25rem; font-weight: 600; color: var(--accent); }
+.trend-table-wrap { overflow-x: auto; background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); max-height: 400px; overflow-y: auto; }
 .table { width: 100%; border-collapse: collapse; }
-.table th, .table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-.table th { background: #f7fafc; color: #4a5568; font-weight: 600; font-size: 0.875rem; }
+.table th, .table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
+.table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 0.8125rem; }
+.table tbody tr:hover { background: #f8fafc; }
 </style>

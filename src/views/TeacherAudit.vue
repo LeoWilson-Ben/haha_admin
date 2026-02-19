@@ -1,14 +1,14 @@
 <template>
   <div>
-    <h2>名师认证审核</h2>
-    <p class="hint">名师入驻申请：通过后该用户将显示在「真人名师」列表。已通过的名师可设置咨询单价（默认 10 元）。</p>
+    <h2 class="page-title">名师认证审核</h2>
+    <p class="page-hint">名师入驻申请：通过后该用户将显示在「真人名师」列表。已通过的名师可设置咨询单价（默认 10 元）。</p>
     <div class="toolbar">
       <select v-model="statusFilter" @change="load">
         <option value="pending">待审核</option>
         <option value="approved">已通过</option>
         <option value="rejected">已驳回</option>
       </select>
-      <button @click="load">刷新</button>
+      <button class="btn-primary" @click="load">刷新</button>
     </div>
     <table class="table">
       <thead>
@@ -134,7 +134,7 @@ onMounted(load)
 .hint { color: #718096; margin-bottom: 16px; }
 .toolbar { margin-bottom: 16px; display: flex; gap: 8px; align-items: center; }
 .toolbar select { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; }
-.toolbar button { padding: 8px 16px; background: #E53E3E; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.toolbar button.btn-primary { padding: 8px 16px; }
 .table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
 .table th { background: #f7fafc; color: #4a5568; font-weight: 600; }

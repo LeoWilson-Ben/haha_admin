@@ -25,8 +25,12 @@ client.interceptors.request.use(config => {
 client.interceptors.response.use(
   res => res,
   err => {
-    if (err.response?.status === 401) {
-      if (typeof window !== 'undefined') window.alert('未授权：请先在「系统配置」中填写并保存管理端密钥')
+    if (err.response?.status === 401 && typeof window !== 'undefined') {
+      const path = window.location?.pathname || ''
+      if (path !== '/login') {
+        window.localStorage?.removeItem('admin_token')
+        window.location.href = '/login'
+      }
     }
     return Promise.reject(err)
   }

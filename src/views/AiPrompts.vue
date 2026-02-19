@@ -1,7 +1,7 @@
 <template>
   <div>
-    <h2>AI 提示词配置</h2>
-    <p class="hint">自定义各场景的 AI 提示词，支持占位符如 {today}、{birth_date}、{direction}、{item_name} 等</p>
+    <h2 class="page-title">AI 提示词配置</h2>
+    <p class="page-hint">自定义各场景的 AI 提示词，支持占位符如 {today}、{birth_date}、{direction}、{item_name} 等</p>
     <template v-if="loading">
       <p>加载中...</p>
     </template>
@@ -63,13 +63,13 @@ onMounted(load)
 </script>
 
 <style scoped>
-.hint { color: #718096; margin-bottom: 20px; }
-.hint code { font-size: 0.85em; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
-.error { color: #c53030; margin-bottom: 16px; }
+.page-hint code { font-size: 0.85em; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+.error { color: var(--danger); margin-bottom: 16px; }
 .list { display: flex; flex-direction: column; gap: 24px; }
-.item { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.item { background: var(--card-bg); padding: 22px; border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); }
 .item-head { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
-.item-head .key { font-size: 0.75rem; color: #718096; }
-.textarea { width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-family: inherit; font-size: 0.875rem; resize: vertical; }
-.btn-save { margin-top: 12px; padding: 8px 20px; background: #E53E3E; color: #fff; border: none; border-radius: 6px; cursor: pointer; }
+.item-head .key { font-size: 0.8125rem; color: var(--text-muted); }
+.textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.875rem; resize: vertical; }
+.textarea:focus { outline: none; border-color: var(--accent); }
+.btn-save { margin-top: 12px; padding: 10px 20px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; }
 </style>

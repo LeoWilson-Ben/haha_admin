@@ -7,10 +7,17 @@ import OrderList from '../views/OrderList.vue'
 import ReportList from '../views/ReportList.vue'
 import Config from '../views/Config.vue'
 import AiPrompts from '../views/AiPrompts.vue'
+import Login from '../views/Login.vue'
 
-export default createRouter({
+function hasToken() {
+  if (typeof localStorage === 'undefined') return !!import.meta.env.VITE_ADMIN_TOKEN
+  return !!(localStorage.getItem('admin_token') || import.meta.env.VITE_ADMIN_TOKEN)
+}
+
+const router = createRouter({
   history: createWebHistory(),
   routes: [
+    { path: '/login', component: Login, meta: { title: '登录', public: true } },
     { path: '/', component: Dashboard, meta: { title: '核心数据看板' } },
     { path: '/users', component: UserList, meta: { title: '用户管理' } },
     { path: '/teacher', component: TeacherAudit, meta: { title: '名师认证审核' } },
@@ -21,3 +28,25 @@ export default createRouter({
     { path: '/config', component: Config, meta: { title: '系统配置' } },
   ],
 })
+
+router.beforeEach((to, _from, next) => {
+  if (to.meta.public) {
+    if (hasToken() && to.path === '/login') return next('/')
+    return next()
+  }
+  if (!hasToken()) return next('/login')
+  next()
+})
+
+export default router
+
+router.beforeEach((to, _from, next) => {
+  if (to.meta.public) {
+    if (hasToken() && to.path === '/login') return next('/')
+    return next()
+  }
+  if (!hasToken()) return next('/login')
+  next()
+})
+
+export default router
