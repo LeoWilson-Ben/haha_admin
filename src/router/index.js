@@ -39,14 +39,3 @@ router.beforeEach((to, _from, next) => {
 })
 
 export default router
-
-router.beforeEach((to, _from, next) => {
-  if (to.meta.public) {
-    if (hasToken() && to.path === '/login') return next('/')
-    return next()
-  }
-  if (!hasToken()) return next('/login')
-  next()
-})
-
-export default router
