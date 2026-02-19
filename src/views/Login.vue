@@ -73,86 +73,85 @@ async function submit() {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(145deg, #f0f9ff 0%, #e0f2fe 50%, #f0fdfa 100%);
+  background: #ffffff;
 }
 .login-card {
   width: 100%;
-  max-width: 400px;
-  background: #fff;
-  border-radius: 16px;
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06), 0 0 0 1px rgba(0, 0, 0, 0.04);
-  padding: 40px;
+  max-width: 380px;
+  padding: 0;
 }
 .logo-wrap {
-  text-align: center;
+  text-align: left;
   margin-bottom: 32px;
 }
 .logo-icon {
   display: inline-block;
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: #0ea5e9;
-  letter-spacing: 0.05em;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #0d0d0d;
+  letter-spacing: -0.02em;
 }
 .title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
-  margin: 8px 0 4px;
+  color: #0d0d0d;
+  margin: 12px 0 4px;
+  letter-spacing: -0.02em;
 }
 .subtitle {
   font-size: 0.875rem;
-  color: #64748b;
+  color: #6e6e80;
+  margin: 0;
 }
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
 }
 .field label {
   display: block;
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  color: #334155;
-  margin-bottom: 6px;
+  color: #0d0d0d;
+  margin-bottom: 8px;
 }
 .field input {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border: 1px solid #e5e5e5;
+  border-radius: 6px;
   font-size: 0.9375rem;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  background: #fff;
+  transition: border-color 0.15s;
 }
 .field input:focus {
   outline: none;
-  border-color: #0ea5e9;
-  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+  border-color: #10a37f;
+}
+.field input::placeholder {
+  color: #8e8ea0;
 }
 .error {
-  font-size: 0.875rem;
-  color: #dc2626;
+  font-size: 0.8125rem;
+  color: #c53030;
   margin: 0;
 }
 .btn-login {
   padding: 12px 20px;
-  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  background: #10a37f;
   color: #fff;
   border: none;
-  border-radius: 10px;
-  font-size: 1rem;
-  font-weight: 600;
+  border-radius: 6px;
+  font-size: 0.9375rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.2s, transform 0.05s;
+  transition: background 0.15s;
 }
 .btn-login:hover:not(:disabled) {
-  opacity: 0.95;
-}
-.btn-login:active:not(:disabled) {
-  transform: scale(0.99);
+  background: #0d8c6d;
 }
 .btn-login:disabled {
-  opacity: 0.7;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 </style>

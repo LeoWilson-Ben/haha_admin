@@ -87,7 +87,7 @@ onMounted(load)
 .toolbar select { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; }
 .toolbar input { padding: 8px 12px; border: 1px solid #e2e8f0; border-radius: 6px; width: 200px; }
 .toolbar button.btn-primary { padding: 8px 16px; }
-.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+.table { width: 100%; border-collapse: collapse; background: #fff; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--card-border); }
 .table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid #e2e8f0; }
 .table th { background: #f7fafc; color: #4a5568; font-weight: 600; }
 .btn-ok { padding: 4px 10px; background: #38a169; color: #fff; border: none; border-radius: 4px; cursor: pointer; }

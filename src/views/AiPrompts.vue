@@ -63,13 +63,14 @@ onMounted(load)
 </script>
 
 <style scoped>
-.page-hint code { font-size: 0.85em; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+.page-hint code { font-size: 0.85em; background: #f7f7f8; padding: 2px 6px; border-radius: 4px; }
 .error { color: var(--danger); margin-bottom: 16px; }
 .list { display: flex; flex-direction: column; gap: 24px; }
-.item { background: var(--card-bg); padding: 22px; border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); }
+.item { background: var(--card-bg); padding: 22px; border-radius: var(--radius); border: 1px solid var(--card-border); }
 .item-head { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
 .item-head .key { font-size: 0.8125rem; color: var(--text-muted); }
 .textarea { width: 100%; padding: 12px 14px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); font-family: inherit; font-size: 0.875rem; resize: vertical; }
 .textarea:focus { outline: none; border-color: var(--accent); }
-.btn-save { margin-top: 12px; padding: 10px 20px; background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; }
+.btn-save { margin-top: 12px; padding: 10px 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-weight: 500; }
+.btn-save:hover { background: var(--accent-hover); }
 </style>

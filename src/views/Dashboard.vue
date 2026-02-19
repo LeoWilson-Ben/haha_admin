@@ -104,15 +104,12 @@ import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
 
 const CHART_COLORS = {
-  blue: 'rgba(14, 165, 233, 0.85)',
-  blueLight: 'rgba(14, 165, 233, 0.35)',
+  green: 'rgba(16, 163, 127, 0.9)',
+  greenLight: 'rgba(16, 163, 127, 0.2)',
   teal: 'rgba(20, 184, 166, 0.85)',
-  tealLight: 'rgba(20, 184, 166, 0.35)',
-  amber: 'rgba(245, 158, 11, 0.85)',
-  amberLight: 'rgba(245, 158, 11, 0.35)',
-  rose: 'rgba(244, 63, 94, 0.85)',
-  roseLight: 'rgba(244, 63, 94, 0.35)',
-  slate: 'rgba(100, 116, 139, 0.85)',
+  amber: 'rgba(245, 158, 11, 0.8)',
+  rose: 'rgba(244, 63, 94, 0.75)',
+  slate: 'rgba(110, 110, 128, 0.8)',
 }
 
 const loading = ref(false)
@@ -144,16 +141,16 @@ const defaultOptions = {
   responsive: true,
   maintainAspectRatio: true,
   plugins: {
-    legend: { labels: { color: '#64748b', font: { size: 12 } } },
+    legend: { labels: { color: '#6e6e80', font: { size: 12 } } },
   },
   scales: {
     x: {
-      ticks: { color: '#64748b', maxRotation: 45, font: { size: 11 } },
-      grid: { color: 'rgba(0,0,0,0.06)' },
+      ticks: { color: '#6e6e80', maxRotation: 45, font: { size: 11 } },
+      grid: { color: 'rgba(0,0,0,0.05)' },
     },
     y: {
-      ticks: { color: '#64748b', font: { size: 11 } },
-      grid: { color: 'rgba(0,0,0,0.06)' },
+      ticks: { color: '#6e6e80', font: { size: 11 } },
+      grid: { color: 'rgba(0,0,0,0.05)' },
     },
   },
 }
@@ -175,7 +172,7 @@ function buildCharts() {
       data: {
         labels,
         datasets: [
-          { label: '新增用户', data: trend.map((r) => r.newUsers), backgroundColor: CHART_COLORS.blue, borderRadius: 4 },
+          { label: '新增用户', data: trend.map((r) => r.newUsers), backgroundColor: CHART_COLORS.green, borderRadius: 4 },
           { label: '发帖量', data: trend.map((r) => r.postCount), backgroundColor: CHART_COLORS.teal, borderRadius: 4 },
           { label: '订单量', data: trend.map((r) => r.orderCount), backgroundColor: CHART_COLORS.amber, borderRadius: 4 },
         ],
@@ -204,8 +201,8 @@ function buildCharts() {
           {
             label: '新增用户',
             data: trend.map((r) => r.newUsers),
-            borderColor: CHART_COLORS.blue,
-            backgroundColor: CHART_COLORS.blueLight,
+            borderColor: CHART_COLORS.green,
+            backgroundColor: CHART_COLORS.greenLight,
             fill: true,
             tension: 0.3,
           },
@@ -258,7 +255,7 @@ function buildCharts() {
         datasets: [
           {
             data: [teacher, withdraw, report],
-            backgroundColor: [CHART_COLORS.blue, CHART_COLORS.amber, CHART_COLORS.rose],
+            backgroundColor: [CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.rose],
             borderWidth: 0,
           },
         ],
@@ -268,7 +265,7 @@ function buildCharts() {
         maintainAspectRatio: true,
         aspectRatio: 1.4,
         plugins: {
-          legend: { position: 'bottom', labels: { color: '#64748b', font: { size: 12 } } },
+          legend: { position: 'bottom', labels: { color: '#6e6e80', font: { size: 12 } } },
         },
       },
     })
@@ -327,18 +324,18 @@ onBeforeUnmount(destroyCharts)
 .section h3 { font-size: 0.9375rem; font-weight: 600; color: var(--text); margin-bottom: 14px; }
 .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
 .cards-pending { margin-bottom: 16px; }
-.card { background: var(--card-bg); padding: 18px; border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); }
-.card.link { cursor: pointer; transition: box-shadow 0.2s, border-color 0.2s; }
-.card.link:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-color: var(--accent); }
+.card { background: var(--card-bg); padding: 18px; border-radius: var(--radius); border: 1px solid var(--card-border); }
+.card.link { cursor: pointer; transition: border-color 0.2s, background 0.15s; }
+.card.link:hover { border-color: var(--accent); background: #fafafa; }
 .card .label { display: block; color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 4px; }
 .card .value { font-size: 1.25rem; font-weight: 600; color: var(--accent); }
 .charts-row { display: flex; flex-direction: column; gap: 24px; }
 .chart-wrap { padding: 20px; max-width: 900px; }
 .chart-wrap canvas { max-height: 280px; }
 .chart-title { font-size: 0.8125rem; color: var(--text-muted); margin: 12px 0 0; }
-.trend-table-wrap { overflow-x: auto; background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--card-shadow); border: 1px solid var(--card-border); max-height: 400px; overflow-y: auto; }
+.trend-table-wrap { overflow-x: auto; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--card-border); max-height: 400px; overflow-y: auto; }
 .table { width: 100%; border-collapse: collapse; }
-.table th, .table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
-.table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 0.8125rem; }
-.table tbody tr:hover { background: #f8fafc; }
+.table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--card-border); }
+.table th { background: #fafafa; color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.table tbody tr:hover { background: #fafafa; }
 </style>

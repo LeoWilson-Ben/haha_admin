@@ -94,8 +94,8 @@ onMounted(load)
 .table-wrap { overflow-x: auto; border-radius: var(--radius); }
 .table { width: 100%; border-collapse: collapse; }
 .table th, .table td { padding: 12px 14px; text-align: left; border-bottom: 1px solid var(--card-border); }
-.table th { background: #f8fafc; color: var(--text-muted); font-weight: 600; font-size: 0.8125rem; }
-.table tbody tr:hover { background: #f8fafc; }
+.table th { background: #fafafa; color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.table tbody tr:hover { background: #fafafa; }
 .btn-ok { padding: 6px 12px; background: var(--success); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; }
 .btn-danger { padding: 6px 12px; background: var(--danger); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-right: 6px; font-size: 0.875rem; }
 .btn-delete { padding: 6px 12px; background: var(--text-muted); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; font-size: 0.875rem; }
