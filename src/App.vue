@@ -4,7 +4,7 @@
       <div class="nav-content">
         <div class="logo-area">
           <div class="logo-icon">玄</div>
-          <span class="logo-text">玄遇灵枢</span>
+          <span class="logo-text">玄遇</span>
         </div>
 
         <nav class="nav-links">
@@ -20,7 +20,14 @@
         </nav>
 
         <div class="user-action">
-          <button class="btn-logout" @click="logout">退出</button>
+          <button class="btn-logout" @click="logout">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px; vertical-align: middle;">
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" y1="12" x2="9" y2="12"></line>
+            </svg>
+            退出
+          </button>
         </div>
       </div>
     </header>
@@ -56,7 +63,7 @@ function logout() {
 :root {
   --primary: #B91C1C;
   --primary-light: #FEE2E2;
-  --bg-body: #F1F5F9;
+  --bg-body: #F8FAFC;
   --bg-nav: #FFFFFF;
   --text-main: #334155;
   --text-muted: #64748B;
@@ -80,7 +87,7 @@ body {
   min-height: 100vh;
 }
 
-/* Top Nav Styles */
+/* Top Nav Styles - Centered */
 .top-nav {
   height: var(--nav-height);
   background-color: var(--bg-nav);
@@ -97,14 +104,15 @@ body {
   height: 100%;
   display: flex;
   align-items: center;
+  justify-content: center; /* Center everything */
   padding: 0 24px;
+  gap: 32px;
 }
 
 .logo-area {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-right: 40px;
 }
 
 .logo-icon {
@@ -131,7 +139,6 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 1;
 }
 
 .nav-item {
@@ -142,6 +149,7 @@ body {
   padding: 8px 16px;
   border-radius: 8px;
   transition: all 0.2s;
+  white-space: nowrap;
 }
 
 .nav-item:hover {
@@ -162,7 +170,8 @@ body {
 }
 
 .user-action {
-  margin-left: 20px;
+  display: flex;
+  align-items: center;
 }
 
 .btn-logout {
@@ -173,6 +182,9 @@ body {
   font-size: 0.875rem;
   color: var(--text-muted);
   cursor: pointer;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
 }
 
 .btn-logout:hover {

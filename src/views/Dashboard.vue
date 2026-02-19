@@ -1,92 +1,113 @@
 <template>
-  <div class="board">
-    <h2 class="page-title">核心数据看板</h2>
-    <p class="page-hint">实时数据、业务数据与趋势，支持时间段筛选</p>
-
-    <div class="filter">
-      <label>时间范围</label>
-      <input type="date" v-model="startDate" />
-      <span>至</span>
-      <input type="date" v-model="endDate" />
-      <button class="btn-primary" @click="load">查询</button>
+  <div class="dashboard-board">
+    <div class="board-header">
+      <h2 class="page-title">核心数据看板</h2>
+      <p class="page-hint">实时监控业务动态与核心指标，默认展示最近一周趋势</p>
     </div>
 
-    <template v-if="loading">
-      <p class="loading-tip">加载中…</p>
-    </template>
-    <template v-else-if="data.realtime">
-      <section class="section">
-        <h3>实时数据</h3>
-        <div class="cards">
-          <div class="card"><span class="label">日活 DAU</span><span class="value">{{ data.realtime.dau ?? '--' }}</span></div>
-          <div class="card"><span class="label">周活 WAU</span><span class="value">{{ data.realtime.wau ?? '--' }}</span></div>
-          <div class="card"><span class="label">月活 MAU</span><span class="value">{{ data.realtime.mau ?? '--' }}</span></div>
-          <div class="card"><span class="label">新增用户(昨)</span><span class="value">{{ data.realtime.newUsers1d ?? '--' }}</span></div>
-          <div class="card"><span class="label">新增(7日)</span><span class="value">{{ data.realtime.newUsers7d ?? '--' }}</span></div>
-          <div class="card"><span class="label">新增(30日)</span><span class="value">{{ data.realtime.newUsers30d ?? '--' }}</span></div>
-          <div class="card"><span class="label">次日留存%</span><span class="value">{{ data.realtime.retention1d ?? '--' }}</span></div>
-          <div class="card"><span class="label">7日留存%</span><span class="value">{{ data.realtime.retention7d ?? '--' }}</span></div>
-          <div class="card"><span class="label">30日留存%</span><span class="value">{{ data.realtime.retention30d ?? '--' }}</span></div>
+    <div class="filter-section card-common">
+      <div class="filter-item">
+        <label>时间跨度</label>
+        <div class="date-group">
+          <input type="date" v-model="startDate" class="date-input" />
+          <span class="to">至</span>
+          <input type="date" v-model="endDate" class="date-input" />
         </div>
-      </section>
-      <section class="section">
-        <h3>业务数据</h3>
-        <div class="cards">
-          <div class="card"><span class="label">订单量</span><span class="value">{{ data.business?.orderCount ?? '--' }}</span></div>
-          <div class="card"><span class="label">交易额(元)</span><span class="value">{{ data.business?.gmv ?? '--' }}</span></div>
-          <div class="card"><span class="label">内容发布量</span><span class="value">{{ data.business?.postCount ?? '--' }}</span></div>
-          <div class="card"><span class="label">付费转化率%</span><span class="value">{{ data.business?.paidConversionRate ?? '--' }}</span></div>
+      </div>
+      <button class="btn-primary" @click="load" :disabled="loading">
+        {{ loading ? '更新中...' : '同步数据' }}
+      </button>
+    </div>
+
+    <template v-if="!loading || data.realtime">
+      <section class="board-section">
+        <div class="section-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+          <h3>实时活跃概览</h3>
         </div>
-      </section>
-      <section class="section">
-        <h3>待办</h3>
-        <div class="cards cards-pending">
-          <div class="card link" @click="$router.push('/teacher')"><span class="label">待审核名师</span><span class="value">{{ data.pending?.teacherPendingCount ?? '--' }}</span></div>
-          <div class="card link" @click="$router.push('/orders')"><span class="label">待审核提现</span><span class="value">{{ data.pending?.withdrawPendingCount ?? '--' }}</span></div>
-          <div class="card link" @click="$router.push('/report')"><span class="label">待处理举报</span><span class="value">{{ data.pending?.reportPendingCount ?? '--' }}</span></div>
-        </div>
-        <div class="chart-wrap card-common" v-if="pendingTotal > 0">
-          <canvas ref="pieCanvas"></canvas>
-          <p class="chart-title">待办占比</p>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="m-label">日活跃 (DAU)</div>
+            <div class="m-value">{{ data.realtime?.dau ?? '--' }}</div>
+          </div>
+          <div class="metric-card">
+            <div class="m-label">周活跃 (WAU)</div>
+            <div class="m-value">{{ data.realtime?.wau ?? '--' }}</div>
+          </div>
+          <div class="metric-card">
+            <div class="m-label">次日留存</div>
+            <div class="m-value">{{ data.realtime?.retention1d ? data.realtime.retention1d + '%' : '--' }}</div>
+          </div>
+          <div class="metric-card accent">
+            <div class="m-label">昨日新增</div>
+            <div class="m-value">{{ data.realtime?.newUsers1d ?? '--' }}</div>
+          </div>
         </div>
       </section>
 
-      <section class="section charts-row" v-if="data.trend && data.trend.length">
-        <h3>趋势图表</h3>
-        <div class="chart-wrap card-common">
-          <canvas ref="barCanvas"></canvas>
-          <p class="chart-title">按日统计（新增用户 / 发帖 / 订单）</p>
+      <section class="board-section">
+        <div class="section-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+          <h3>业务经营指标</h3>
         </div>
-        <div class="chart-wrap card-common">
-          <canvas ref="lineCanvas"></canvas>
-          <p class="chart-title">新增用户趋势</p>
-        </div>
-        <div class="chart-wrap card-common">
-          <canvas ref="barGmvCanvas"></canvas>
-          <p class="chart-title">交易额（元）</p>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="m-label">累计订单量</div>
+            <div class="m-value">{{ data.business?.orderCount ?? '--' }}</div>
+          </div>
+          <div class="metric-card">
+            <div class="m-label">成交总额 (GMV)</div>
+            <div class="m-value">¥{{ data.business?.gmv ?? '--' }}</div>
+          </div>
+          <div class="metric-card">
+            <div class="m-label">内容发布量</div>
+            <div class="m-value">{{ data.business?.postCount ?? '--' }}</div>
+          </div>
+          <div class="metric-card">
+            <div class="m-label">付费转化率</div>
+            <div class="m-value">{{ data.business?.paidConversionRate ? data.business.paidConversionRate + '%' : '--' }}</div>
+          </div>
         </div>
       </section>
 
-      <section class="section" v-if="data.trend && data.trend.length">
-        <h3>趋势明细表</h3>
-        <div class="trend-table-wrap">
-          <table class="table">
+      <div class="charts-container">
+        <div class="chart-box card-common">
+          <div class="chart-header">数据趋势 (新增/发帖/订单)</div>
+          <div class="canvas-wrap">
+            <canvas ref="barCanvas"></canvas>
+          </div>
+        </div>
+        <div class="chart-box card-common">
+          <div class="chart-header">每日新增用户走势</div>
+          <div class="canvas-wrap">
+            <canvas ref="lineCanvas"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <section class="board-section">
+        <div class="section-header">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+          <h3>历史数据明细</h3>
+        </div>
+        <div class="table-card card-common">
+          <table class="modern-table">
             <thead>
               <tr>
-                <th>日期</th>
+                <th>统计日期</th>
                 <th>新增用户</th>
                 <th>发帖量</th>
                 <th>订单量</th>
-                <th>交易额</th>
+                <th>成交金额</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="row in trendReversed" :key="row.date">
-                <td>{{ row.date }}</td>
+                <td class="date-cell">{{ row.date }}</td>
                 <td>{{ row.newUsers }}</td>
                 <td>{{ row.postCount }}</td>
                 <td>{{ row.orderCount }}</td>
-                <td>{{ row.gmv }}</td>
+                <td class="amount-cell">¥{{ row.gmv }}</td>
               </tr>
             </tbody>
           </table>
@@ -104,12 +125,12 @@ import { Chart, registerables } from 'chart.js'
 Chart.register(...registerables)
 
 const CHART_COLORS = {
-  green: 'rgba(16, 163, 127, 0.9)',
-  greenLight: 'rgba(16, 163, 127, 0.2)',
-  teal: 'rgba(20, 184, 166, 0.85)',
-  amber: 'rgba(245, 158, 11, 0.8)',
-  rose: 'rgba(244, 63, 94, 0.75)',
-  slate: 'rgba(110, 110, 128, 0.8)',
+  primary: '#B91C1C',
+  primaryAlpha: 'rgba(185, 28, 28, 0.1)',
+  success: '#10B981',
+  warning: '#F59E0B',
+  info: '#3B82F6',
+  text: '#64748B'
 }
 
 const loading = ref(false)
@@ -118,80 +139,57 @@ const startDate = ref('')
 const endDate = ref('')
 const barCanvas = ref(null)
 const lineCanvas = ref(null)
-const barGmvCanvas = ref(null)
-const pieCanvas = ref(null)
 
 let chartBar = null
 let chartLine = null
-let chartBarGmv = null
-let chartPie = null
 
 const trendReversed = computed(() => {
   const t = data.value.trend
   return t && t.length ? t.slice().reverse() : []
 })
 
-const pendingTotal = computed(() => {
-  const p = data.value.pending
-  if (!p) return 0
-  return (p.teacherPendingCount || 0) + (p.withdrawPendingCount || 0) + (p.reportPendingCount || 0)
-})
-
 const defaultOptions = {
   responsive: true,
-  maintainAspectRatio: true,
+  maintainAspectRatio: false,
   plugins: {
-    legend: { labels: { color: '#6e6e80', font: { size: 12 } } },
+    legend: { position: 'bottom', labels: { color: CHART_COLORS.text, boxWidth: 12, padding: 20 } },
   },
   scales: {
-    x: {
-      ticks: { color: '#6e6e80', maxRotation: 45, font: { size: 11 } },
-      grid: { color: 'rgba(0,0,0,0.05)' },
-    },
-    y: {
-      ticks: { color: '#6e6e80', font: { size: 11 } },
-      grid: { color: 'rgba(0,0,0,0.05)' },
-    },
+    x: { grid: { display: false }, ticks: { color: CHART_COLORS.text } },
+    y: { grid: { color: '#F1F5F9' }, ticks: { color: CHART_COLORS.text }, beginAtZero: true },
   },
+}
+
+function initDateRange() {
+  const end = new Date()
+  const start = new Date()
+  start.setDate(end.getDate() - 7) // Default 7 days
+
+  startDate.value = start.toISOString().split('T')[0]
+  endDate.value = end.toISOString().split('T')[0]
 }
 
 function buildCharts() {
   const trend = data.value.trend || []
   const labels = trend.map((r) => r.date)
-  const teacher = data.value.pending?.teacherPendingCount || 0
-  const withdraw = data.value.pending?.withdrawPendingCount || 0
-  const report = data.value.pending?.reportPendingCount || 0
 
-  if (chartBar && barCanvas.value) {
-    chartBar.destroy()
-    chartBar = null
-  }
+  if (chartBar) chartBar.destroy()
   if (barCanvas.value && labels.length) {
     chartBar = new Chart(barCanvas.value, {
       type: 'bar',
       data: {
         labels,
         datasets: [
-          { label: '新增用户', data: trend.map((r) => r.newUsers), backgroundColor: CHART_COLORS.green, borderRadius: 4 },
-          { label: '发帖量', data: trend.map((r) => r.postCount), backgroundColor: CHART_COLORS.teal, borderRadius: 4 },
-          { label: '订单量', data: trend.map((r) => r.orderCount), backgroundColor: CHART_COLORS.amber, borderRadius: 4 },
+          { label: '新增用户', data: trend.map((r) => r.newUsers), backgroundColor: CHART_COLORS.info, borderRadius: 4 },
+          { label: '发帖量', data: trend.map((r) => r.postCount), backgroundColor: CHART_COLORS.success, borderRadius: 4 },
+          { label: '订单量', data: trend.map((r) => r.warning), backgroundColor: CHART_COLORS.primary, borderRadius: 4 },
         ],
       },
-      options: {
-        ...defaultOptions,
-        aspectRatio: 2.2,
-        scales: {
-          ...defaultOptions.scales,
-          y: { ...defaultOptions.scales.y, beginAtZero: true },
-        },
-      },
+      options: defaultOptions,
     })
   }
 
-  if (chartLine && lineCanvas.value) {
-    chartLine.destroy()
-    chartLine = null
-  }
+  if (chartLine) chartLine.destroy()
   if (lineCanvas.value && labels.length) {
     chartLine = new Chart(lineCanvas.value, {
       type: 'line',
@@ -199,143 +197,93 @@ function buildCharts() {
         labels,
         datasets: [
           {
-            label: '新增用户',
+            label: '新增用户走势',
             data: trend.map((r) => r.newUsers),
-            borderColor: CHART_COLORS.green,
-            backgroundColor: CHART_COLORS.greenLight,
+            borderColor: CHART_COLORS.primary,
+            backgroundColor: CHART_COLORS.primaryAlpha,
             fill: true,
-            tension: 0.3,
+            tension: 0.4,
+            pointRadius: 4,
+            pointBackgroundColor: '#fff',
+            borderWidth: 3
           },
         ],
       },
-      options: {
-        ...defaultOptions,
-        aspectRatio: 2.2,
-        scales: {
-          ...defaultOptions.scales,
-          y: { ...defaultOptions.scales.y, beginAtZero: true },
-        },
-      },
+      options: defaultOptions,
     })
-  }
-
-  if (chartBarGmv && barGmvCanvas.value) {
-    chartBarGmv.destroy()
-    chartBarGmv = null
-  }
-  if (barGmvCanvas.value && labels.length) {
-    chartBarGmv = new Chart(barGmvCanvas.value, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          { label: '交易额(元)', data: trend.map((r) => r.gmv), backgroundColor: CHART_COLORS.teal, borderRadius: 4 },
-        ],
-      },
-      options: {
-        ...defaultOptions,
-        aspectRatio: 2.2,
-        scales: {
-          ...defaultOptions.scales,
-          y: { ...defaultOptions.scales.y, beginAtZero: true },
-        },
-      },
-    })
-  }
-
-  if (chartPie && pieCanvas.value) {
-    chartPie.destroy()
-    chartPie = null
-  }
-  if (pieCanvas.value && pendingTotal.value > 0) {
-    chartPie = new Chart(pieCanvas.value, {
-      type: 'doughnut',
-      data: {
-        labels: ['待审核名师', '待审核提现', '待处理举报'],
-        datasets: [
-          {
-            data: [teacher, withdraw, report],
-            backgroundColor: [CHART_COLORS.green, CHART_COLORS.amber, CHART_COLORS.rose],
-            borderWidth: 0,
-          },
-        ],
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: true,
-        aspectRatio: 1.4,
-        plugins: {
-          legend: { position: 'bottom', labels: { color: '#6e6e80', font: { size: 12 } } },
-        },
-      },
-    })
-  }
-}
-
-function destroyCharts() {
-  if (chartBar) {
-    chartBar.destroy()
-    chartBar = null
-  }
-  if (chartLine) {
-    chartLine.destroy()
-    chartLine = null
-  }
-  if (chartBarGmv) {
-    chartBarGmv.destroy()
-    chartBarGmv = null
-  }
-  if (chartPie) {
-    chartPie.destroy()
-    chartPie = null
   }
 }
 
 async function load() {
   loading.value = true
   try {
-    const params = { period: 'day' }
-    if (startDate.value) params.start_date = startDate.value
-    if (endDate.value) params.end_date = endDate.value
+    const params = { period: 'day', start_date: startDate.value, end_date: endDate.value }
     const res = await api.getCoreData(params)
-    data.value = (res && res.data) ? res.data : {}
-    if (!startDate.value && data.value.startDate) startDate.value = data.value.startDate
-    if (!endDate.value && data.value.endDate) endDate.value = data.value.endDate
+    data.value = res?.data || {}
   } catch (_) {
     data.value = {}
   }
   loading.value = false
 }
 
-onMounted(load)
+onMounted(() => {
+  initDateRange()
+  load()
+})
+
 watch(data, () => {
-  if (data.value.realtime) nextTick(buildCharts)
+  if (data.value.trend) nextTick(buildCharts)
 }, { deep: true })
-onBeforeUnmount(destroyCharts)
+
+onBeforeUnmount(() => {
+  if (chartBar) chartBar.destroy()
+  if (chartLine) chartLine.destroy()
+})
 </script>
 
 <style scoped>
-.filter { margin-bottom: 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
-.filter label { margin-right: 4px; font-size: 0.875rem; color: var(--text-muted); }
-.filter input[type="date"] { padding: 8px 12px; border: 1px solid var(--card-border); border-radius: var(--radius-sm); font-size: 0.875rem; }
-.filter span { color: var(--text-muted); font-size: 0.875rem; }
-.loading-tip { color: var(--text-muted); margin: 24px 0; }
-.section { margin-bottom: 32px; }
-.section h3 { font-size: 0.9375rem; font-weight: 600; color: var(--text); margin-bottom: 14px; }
-.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 14px; }
-.cards-pending { margin-bottom: 16px; }
-.card { background: var(--card-bg); padding: 18px; border-radius: var(--radius); border: 1px solid var(--card-border); }
-.card.link { cursor: pointer; transition: border-color 0.2s, background 0.15s; }
-.card.link:hover { border-color: var(--accent); background: #fafafa; }
-.card .label { display: block; color: var(--text-muted); font-size: 0.8125rem; margin-bottom: 4px; }
-.card .value { font-size: 1.25rem; font-weight: 600; color: var(--accent); }
-.charts-row { display: flex; flex-direction: column; gap: 24px; }
-.chart-wrap { padding: 20px; max-width: 900px; }
-.chart-wrap canvas { max-height: 280px; }
-.chart-title { font-size: 0.8125rem; color: var(--text-muted); margin: 12px 0 0; }
-.trend-table-wrap { overflow-x: auto; background: var(--card-bg); border-radius: var(--radius); border: 1px solid var(--card-border); max-height: 400px; overflow-y: auto; }
-.table { width: 100%; border-collapse: collapse; }
-.table th, .table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--card-border); }
-.table th { background: #fafafa; color: var(--text-muted); font-weight: 500; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.03em; }
-.table tbody tr:hover { background: #fafafa; }
+.dashboard-board { max-width: 1200px; margin: 0 auto; }
+.board-header { margin-bottom: 24px; text-align: center; }
+
+.filter-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 32px;
+  margin-bottom: 32px;
+}
+
+.filter-item { display: flex; align-items: center; gap: 16px; }
+.filter-item label { font-weight: 600; color: var(--text-main); font-size: 0.875rem; }
+.date-group { display: flex; align-items: center; background: var(--bg-body); padding: 4px 12px; border-radius: 8px; border: 1px solid var(--card-border); }
+.date-input { border: none; background: transparent; padding: 6px; outline: none; font-size: 0.875rem; color: var(--text-main); }
+.to { margin: 0 12px; color: var(--text-light); font-size: 0.8125rem; }
+
+.board-section { margin-bottom: 40px; }
+.section-header { display: flex; align-items: center; gap: 8px; margin-bottom: 16px; color: var(--text-muted); }
+.section-header h3 { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+
+.metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.metric-card { background: white; padding: 24px; border-radius: var(--radius); border: 1px solid var(--card-border); box-shadow: var(--card-shadow); transition: transform 0.2s; }
+.metric-card:hover { transform: translateY(-2px); }
+.metric-card.accent { border-left: 4px solid var(--primary); }
+.m-label { font-size: 0.8125rem; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+.m-value { font-size: 1.75rem; font-weight: 800; color: var(--text-main); }
+
+.charts-container { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 40px; }
+.chart-box { padding: 24px; display: flex; flex-direction: column; }
+.chart-header { font-weight: 700; font-size: 0.9375rem; margin-bottom: 20px; color: var(--text-main); }
+.canvas-wrap { height: 260px; position: relative; }
+
+.table-card { overflow: hidden; }
+.modern-table { width: 100%; border-collapse: collapse; }
+.modern-table th { background: #F8FAFC; padding: 14px 24px; text-align: left; font-size: 0.8125rem; font-weight: 600; color: var(--text-muted); border-bottom: 1px solid var(--card-border); }
+.modern-table td { padding: 16px 24px; border-bottom: 1px solid var(--card-border); font-size: 0.9375rem; }
+.date-cell { font-weight: 600; color: var(--text-main); }
+.amount-cell { color: var(--success); font-weight: 700; }
+
+@media (max-width: 1024px) {
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+  .charts-container { grid-template-columns: 1fr; }
+}
 </style>
