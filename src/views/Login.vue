@@ -2,7 +2,7 @@
   <div class="login-page">
     <div class="login-card">
       <div class="logo-wrap">
-        <span class="logo-icon">灵枢</span>
+        <span class="logo-icon">玄遇</span>
         <h1 class="title">管理后台</h1>
         <p class="subtitle">请输入管理端密钥登录</p>
       </div>

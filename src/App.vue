@@ -6,7 +6,7 @@
     <template v-else>
       <aside class="sidebar">
         <div class="logo-wrap">
-          <span class="logo-text">灵枢</span>
+          <span class="logo-text">玄遇</span>
           <span class="logo-dash">管理后台</span>
         </div>
         <nav class="nav">
