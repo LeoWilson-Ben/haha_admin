@@ -6,7 +6,9 @@
       <p>加载中...</p>
     </template>
     <template v-else>
-      <div class="list">
+      <p v-if="loadError" class="error">{{ loadError }}</p>
+      <p v-else-if="list.length === 0" class="hint">暂无数据。若接口报错，请确认后端数据库已执行：<code>mysql -u root -p lingshu &lt; server/sql/migrate_ai_prompt.sql</code></p>
+      <div class="list" v-else>
         <div class="item" v-for="p in list" :key="p.key">
           <div class="item-head">
             <strong>{{ p.name || p.key }}</strong>
@@ -26,16 +28,20 @@ import { api } from '../api'
 
 const loading = ref(false)
 const list = ref([])
+const loadError = ref('')
 
 async function load() {
   loading.value = true
+  loadError.value = ''
   try {
     const res = await api.getAiPrompts()
     const rows = (res.data && res.data.list) ? res.data.list : []
     rows.forEach(r => { r._content = r.content || '' })
     list.value = rows
-  } catch (_) {
+  } catch (e) {
     list.value = []
+    const msg = e.response?.data?.message || e.response?.data?.data || e.message || '请求失败'
+    loadError.value = '加载失败：' + (typeof msg === 'string' ? msg : JSON.stringify(msg))
   }
   loading.value = false
 }
@@ -58,6 +64,8 @@ onMounted(load)
 
 <style scoped>
 .hint { color: #718096; margin-bottom: 20px; }
+.hint code { font-size: 0.85em; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; }
+.error { color: #c53030; margin-bottom: 16px; }
 .list { display: flex; flex-direction: column; gap: 24px; }
 .item { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
 .item-head { margin-bottom: 12px; display: flex; align-items: center; gap: 12px; }
