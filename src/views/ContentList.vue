@@ -40,10 +40,19 @@
 
         <div class="post-body">
           <p class="post-content">{{ item.content || '（无文字内容）' }}</p>
-          <div v-if="item.images && item.images.length" class="post-images">
-             <img v-for="(img, idx) in item.images.slice(0, 3)" :key="idx" :src="img" class="thumb" />
-             <div v-if="item.images.length > 3" class="more-imgs">+{{ item.images.length - 3 }}</div>
+          <div v-if="mediaList(item).length" class="post-media-preview">
+            <template v-if="item.mediaType === 'video'">
+              <div class="preview-wrap video-preview" @click="openViewer(item)">
+                <img v-if="(item.mediaCoverUrls && item.mediaCoverUrls[0]) || item.mediaUrls[0]" :src="(item.mediaCoverUrls && item.mediaCoverUrls[0]) || item.mediaUrls[0]" class="thumb" alt="封面" />
+                <span class="play-icon">▶</span>
+              </div>
+            </template>
+            <template v-else>
+              <img v-for="(url, idx) in (item.mediaUrls || []).slice(0, 3)" :key="idx" :src="url" class="thumb clickable" @click="openViewer(item, idx)" />
+              <div v-if="(item.mediaUrls && item.mediaUrls.length > 3)" class="more-imgs" @click="openViewer(item, 0)">+{{ item.mediaUrls.length - 3 }}</div>
+            </template>
           </div>
+          <button v-if="mediaList(item).length" type="button" class="btn-view-media" @click="openViewer(item)">{{ item.mediaType === 'video' ? '查看视频' : '查看图片' }}</button>
         </div>
 
         <div class="post-footer">
@@ -58,17 +67,52 @@
         </div>
       </div>
     </div>
+
+    <div v-if="viewer.item" class="viewer-overlay" @click.self="closeViewer">
+      <div class="viewer-box">
+        <button type="button" class="viewer-close" @click="closeViewer" aria-label="关闭">×</button>
+        <p class="viewer-content">{{ viewer.item.contentFull || viewer.item.content || '（无文字）' }}</p>
+        <div v-if="viewer.item.mediaType === 'video'" class="viewer-video-wrap">
+          <video v-if="viewer.item.mediaUrls && viewer.item.mediaUrls[0]" :src="viewer.item.mediaUrls[0]" controls autoplay class="viewer-video"></video>
+        </div>
+        <template v-else-if="viewer.item.mediaUrls && viewer.item.mediaUrls.length">
+          <div class="viewer-images">
+            <img v-for="(url, i) in viewer.item.mediaUrls" :key="i" :src="url" class="viewer-img" :class="{ active: viewer.imageIndex === i }" @click="viewer.imageIndex = i" />
+          </div>
+          <div class="viewer-current">
+            <img :src="viewer.item.mediaUrls[viewer.imageIndex]" alt="大图" class="viewer-current-img" />
+          </div>
+        </template>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { api } from '../api'
 
 const statusFilter = ref(1)
 const keyword = ref('')
 const list = ref([])
 const loading = ref(false)
+const viewer = ref({ item: null, imageIndex: 0 })
+
+function mediaList(item) {
+  return (item && item.mediaUrls && Array.isArray(item.mediaUrls)) ? item.mediaUrls : []
+}
+
+function openViewer(item, imageIndex = 0) {
+  viewer.value = { item, imageIndex }
+}
+
+function closeViewer() {
+  viewer.value = { item: null, imageIndex: 0 }
+}
+
+function onKeydown(e) {
+  if (e.key === 'Escape' && viewer.value.item) closeViewer()
+}
 
 async function load() {
   loading.value = true
@@ -92,7 +136,13 @@ async function setStatus(id, status) {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  window.addEventListener('keydown', onKeydown)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <style scoped>
@@ -120,9 +170,16 @@ onMounted(load)
 
 .post-body { padding: 16px 20px; flex: 1; }
 .post-content { font-size: 0.9375rem; line-height: 1.6; color: var(--text-main); margin-bottom: 12px; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
-.post-images { display: flex; gap: 8px; align-items: center; }
-.post-images img { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
-.more-imgs { font-size: 0.75rem; color: var(--text-muted); background: var(--bg-main); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 6px; }
+.post-media-preview { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 10px; }
+.post-media-preview .thumb { width: 60px; height: 60px; object-fit: cover; border-radius: 6px; }
+.post-media-preview .thumb.clickable { cursor: pointer; }
+.post-media-preview .thumb.clickable:hover { opacity: 0.9; }
+.preview-wrap.video-preview { position: relative; cursor: pointer; width: 60px; height: 60px; border-radius: 6px; overflow: hidden; }
+.preview-wrap.video-preview .thumb { width: 100%; height: 100%; object-fit: cover; }
+.play-icon { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 28px; height: 28px; background: rgba(0,0,0,0.6); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.more-imgs { font-size: 0.75rem; color: var(--text-muted); background: var(--bg-main); width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; border-radius: 6px; cursor: pointer; }
+.btn-view-media { margin-top: 4px; padding: 6px 12px; font-size: 0.8125rem; color: var(--accent); background: transparent; border: 1px solid var(--accent); border-radius: 6px; cursor: pointer; }
+.btn-view-media:hover { background: rgba(16, 163, 127, 0.08); }
 
 .post-footer { padding: 12px 20px; background: #F8FAFC; border-top: 1px solid var(--card-border); display: flex; justify-content: space-between; align-items: center; }
 .stats { display: flex; gap: 16px; color: var(--text-muted); font-size: 0.8125rem; }
@@ -134,4 +191,17 @@ onMounted(load)
 .btn-outline-success:hover { background: var(--success); color: #fff; }
 
 .loading-full, .empty-full { grid-column: 1 / -1; padding: 100px; text-align: center; color: var(--text-muted); background: #fff; border-radius: 12px; border: 1px dashed var(--card-border); }
+
+.viewer-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.viewer-box { background: #fff; border-radius: 12px; max-width: 90vw; max-height: 90vh; overflow: auto; padding: 24px; position: relative; }
+.viewer-close { position: absolute; top: 12px; right: 12px; width: 36px; height: 36px; border: none; background: #f0f0f0; border-radius: 50%; font-size: 1.5rem; line-height: 1; cursor: pointer; color: #666; }
+.viewer-close:hover { background: #e0e0e0; }
+.viewer-content { font-size: 0.9375rem; line-height: 1.6; color: var(--text-main); margin-bottom: 16px; white-space: pre-wrap; max-height: 120px; overflow-y: auto; }
+.viewer-video-wrap { margin: 0 auto; }
+.viewer-video { max-width: 100%; max-height: 70vh; display: block; border-radius: 8px; }
+.viewer-images { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
+.viewer-img { width: 56px; height: 56px; object-fit: cover; border-radius: 6px; cursor: pointer; border: 2px solid transparent; opacity: 0.7; }
+.viewer-img.active { border-color: var(--accent); opacity: 1; }
+.viewer-current { text-align: center; }
+.viewer-current-img { max-width: 100%; max-height: 60vh; object-fit: contain; border-radius: 8px; }
 </style>

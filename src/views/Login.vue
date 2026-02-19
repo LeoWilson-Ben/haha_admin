@@ -9,7 +9,7 @@
       <div class="login-header">
         <div class="brand">
           <div class="logo-box">玄</div>
-          <span class="brand-name">玄遇灵枢</span>
+          <span class="brand-name">玄遇</span>
         </div>
         <h1>管理后台登录</h1>
         <p>请输入管理员密钥以访问系统</p>
@@ -41,7 +41,7 @@
       </form>
 
       <div class="login-footer">
-        <p>© 2024 玄遇灵枢 · 数字化命理管理中心</p>
+        <p>© 2024 玄遇 · 数字化命理管理中心</p>
       </div>
     </div>
   </div>
