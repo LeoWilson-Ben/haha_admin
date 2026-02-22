@@ -16,6 +16,7 @@
           <th>举报人</th>
           <th>对象类型</th>
           <th>对象ID</th>
+          <th>被举报人</th>
           <th>原因</th>
           <th>状态</th>
           <th>处理结果</th>
@@ -24,13 +25,14 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-if="loading"><td :colspan="statusFilter === 'pending' ? 10 : 9">加载中...</td></tr>
-        <tr v-else-if="!list.length"><td :colspan="statusFilter === 'pending' ? 10 : 9">暂无数据</td></tr>
+        <tr v-if="loading"><td :colspan="statusFilter === 'pending' ? 11 : 10">加载中...</td></tr>
+        <tr v-else-if="!list.length"><td :colspan="statusFilter === 'pending' ? 11 : 10">暂无数据</td></tr>
         <tr v-for="item in list" :key="item.id">
           <td>{{ item.id }}</td>
           <td>{{ item.reporterNickname }}</td>
           <td>{{ item.targetType }}</td>
           <td>{{ item.targetId }}</td>
+          <td>{{ item.targetNickname || '-' }}</td>
           <td>{{ item.reason || '-' }}</td>
           <td>{{ item.status === 'handled' ? '已处理' : '待处理' }}</td>
           <td>{{ item.handleResult || '-' }}</td>
