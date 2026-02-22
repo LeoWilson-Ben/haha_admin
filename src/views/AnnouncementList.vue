@@ -65,49 +65,78 @@
     </div>
 
     <!-- 新增/编辑弹层 -->
-    <div v-if="formVisible" class="modal-overlay" @click.self="formVisible = false">
-      <div class="modal-card card-common">
-        <div class="modal-header">
-          <h3>{{ formId ? '编辑公告' : '新增公告' }}</h3>
-          <button type="button" class="modal-close" @click="formVisible = false" aria-label="关闭">×</button>
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="formVisible" class="modal-overlay" @click.self="formVisible = false">
+          <div class="modal-card card-common" @click.stop>
+            <div class="modal-header">
+              <div class="modal-title-wrap">
+                <span class="modal-icon">📢</span>
+                <h3>{{ formId ? '编辑公告' : '新增公告' }}</h3>
+              </div>
+              <button type="button" class="modal-close" @click="formVisible = false" aria-label="关闭">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
+            </div>
+            <div class="modal-body">
+              <section class="form-section">
+                <h4 class="form-section-title">基本信息</h4>
+                <div class="form-row">
+                  <label>标题 <span class="required">*</span><span class="form-hint">{{ (form.title || '').length }}/128</span></label>
+                  <input v-model="form.title" placeholder="请输入公告标题" maxlength="128" class="input-title" />
+                </div>
+                <div class="form-row">
+                  <label>正文</label>
+                  <textarea v-model="form.content" placeholder="公告正文内容，支持多行（选填）" rows="4"></textarea>
+                </div>
+                <div class="form-row">
+                  <label>跳转链接</label>
+                  <input v-model="form.linkUrl" placeholder="选填，如 https://..." maxlength="512" type="url" />
+                </div>
+              </section>
+              <section class="form-section">
+                <h4 class="form-section-title">展示设置</h4>
+                <div class="form-row form-row-switch">
+                  <label class="switch-label">
+                    <span class="switch-text">上架展示</span>
+                    <span class="switch-desc">开启后 APP 端可见</span>
+                  </label>
+                  <label class="switch-wrap">
+                    <input type="checkbox" v-model="form.statusCheck" class="switch-input" />
+                    <span class="switch-slider"></span>
+                  </label>
+                </div>
+                <div class="form-row form-row-inline">
+                  <div class="form-half">
+                    <label>排序</label>
+                    <input v-model.number="form.sortOrder" type="number" placeholder="0" min="0" />
+                    <span class="field-hint">数值越大越靠前</span>
+                  </div>
+                </div>
+                <div class="form-row form-row-inline">
+                  <div class="form-half">
+                    <label>开始时间</label>
+                    <input v-model="form.startAt" type="datetime-local" />
+                    <span class="field-hint">留空则立即生效</span>
+                  </div>
+                  <div class="form-half">
+                    <label>结束时间</label>
+                    <input v-model="form.endAt" type="datetime-local" />
+                    <span class="field-hint">留空则长期有效</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn-outline" @click="formVisible = false">取消</button>
+              <button type="button" class="btn-primary btn-save" @click="submitForm">
+                <span class="btn-save-text">保存</span>
+              </button>
+            </div>
+          </div>
         </div>
-        <div class="modal-body">
-          <div class="form-row">
-            <label>标题 <span class="required">*</span></label>
-            <input v-model="form.title" placeholder="公告标题" maxlength="128" />
-          </div>
-          <div class="form-row">
-            <label>正文</label>
-            <textarea v-model="form.content" placeholder="公告正文（选填）" rows="4"></textarea>
-          </div>
-          <div class="form-row">
-            <label>跳转链接</label>
-            <input v-model="form.linkUrl" placeholder="https://..." maxlength="512" />
-          </div>
-          <div class="form-row row-inline">
-            <label class="inline">
-              <input type="checkbox" v-model="form.statusCheck" /> 上架展示
-            </label>
-          </div>
-          <div class="form-row">
-            <label>排序（数字越大越靠前）</label>
-            <input v-model.number="form.sortOrder" type="number" placeholder="0" />
-          </div>
-          <div class="form-row">
-            <label>开始时间（选填，留空则立即生效）</label>
-            <input v-model="form.startAt" type="datetime-local" />
-          </div>
-          <div class="form-row">
-            <label>结束时间（选填，留空则长期有效）</label>
-            <input v-model="form.endAt" type="datetime-local" />
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn-outline" @click="formVisible = false">取消</button>
-          <button type="button" class="btn-primary" @click="submitForm">保存</button>
-        </div>
-      </div>
-    </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
@@ -265,21 +294,96 @@ onMounted(load)
 .btn-link.danger { color: #DC2626; }
 .btn-link.success { color: #16A34A; }
 
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
-.modal-card { width: 100%; max-width: 560px; max-height: 90vh; overflow: auto; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px; border-bottom: 1px solid #E2E8F0; }
-.modal-header h3 { font-size: 1.125rem; font-weight: 700; color: #1E293B; }
-.modal-close { width: 32px; height: 32px; border: none; background: #F1F5F9; border-radius: 6px; font-size: 1.25rem; line-height: 1; cursor: pointer; color: #64748B; }
-.modal-close:hover { background: #E2E8F0; }
-.modal-body { padding: 24px; }
-.modal-footer { padding: 16px 24px; border-top: 1px solid #E2E8F0; display: flex; justify-content: flex-end; }
+/* 弹层 */
+.modal-fade-enter-active,
+.modal-fade-leave-active { transition: opacity 0.2s ease; }
+.modal-fade-enter-from,
+.modal-fade-leave-to { opacity: 0; }
+.modal-fade-enter-active .modal-card,
+.modal-fade-leave-active .modal-card { transition: transform 0.2s ease; }
+.modal-fade-enter-from .modal-card,
+.modal-fade-leave-to .modal-card { transform: scale(0.96); }
+
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
+  z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.modal-card {
+  width: 100%; max-width: 560px; max-height: 90vh; overflow: hidden; display: flex; flex-direction: column;
+  border-radius: 16px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 24px; border-bottom: 1px solid #E2E8F0; background: #FAFAFA; flex-shrink: 0;
+}
+.modal-title-wrap { display: flex; align-items: center; gap: 10px; }
+.modal-icon { font-size: 1.25rem; }
+.modal-header h3 { font-size: 1.125rem; font-weight: 700; color: #1E293B; margin: 0; }
+.modal-close {
+  width: 36px; height: 36px; border: none; background: #F1F5F9; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center; cursor: pointer; color: #64748B;
+}
+.modal-close:hover { background: #E2E8F0; color: #1E293B; }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; min-height: 0; }
+.modal-footer {
+  padding: 18px 24px; border-top: 1px solid #E2E8F0; background: #FAFAFA;
+  display: flex; justify-content: flex-end; gap: 12px; flex-shrink: 0;
+}
+
+/* 表单分区 */
+.form-section { margin-bottom: 28px; }
+.form-section:last-child { margin-bottom: 0; }
+.form-section-title {
+  font-size: 0.8125rem; font-weight: 600; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #F1F5F9;
+}
 
 .form-row { margin-bottom: 18px; }
-.form-row label { display: block; margin-bottom: 6px; font-size: 0.875rem; font-weight: 600; color: #374151; }
+.form-row:last-child { margin-bottom: 0; }
+.form-row > label { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; font-size: 0.875rem; font-weight: 600; color: #374151; }
 .form-row .required { color: #DC2626; }
-.form-row input[type="text"], .form-row input[type="number"], .form-row textarea { width: 100%; padding: 10px 12px; border: 1px solid #E2E8F0; border-radius: 8px; font-size: 0.875rem; }
-.form-row input:focus, .form-row textarea:focus { outline: none; border-color: var(--primary); }
-.form-row textarea { resize: vertical; min-height: 80px; }
-.form-row.row-inline .inline { display: flex; align-items: center; gap: 8px; font-weight: 500; cursor: pointer; }
-.form-row input[type="datetime-local"] { min-width: 200px; }
+.form-hint { font-weight: 400; color: #94A3B8; font-size: 0.8125rem; }
+.form-row input[type="text"],
+.form-row input[type="number"],
+.form-row input[type="url"],
+.form-row textarea {
+  width: 100%; padding: 12px 14px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.9375rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.form-row input::placeholder,
+.form-row textarea::placeholder { color: #94A3B8; }
+.form-row input:focus,
+.form-row textarea:focus {
+  outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12);
+}
+.form-row .input-title { font-weight: 500; }
+.form-row textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+
+/* 上架开关 */
+.form-row-switch { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+.switch-label { display: flex; flex-direction: column; gap: 2px !important; margin-bottom: 0 !important; cursor: default; }
+.switch-text { font-size: 0.875rem; font-weight: 600; color: #374151; }
+.switch-desc { font-size: 0.8125rem; font-weight: 400; color: #94A3B8; }
+.switch-wrap { position: relative; display: inline-block; width: 44px; height: 24px; flex-shrink: 0; cursor: pointer; }
+.switch-input { opacity: 0; width: 0; height: 0; }
+.switch-slider {
+  position: absolute; inset: 0; background: #E2E8F0; border-radius: 24px; transition: 0.25s;
+}
+.switch-slider::before {
+  content: ''; position: absolute; width: 20px; height: 20px; left: 2px; bottom: 2px;
+  background: #fff; border-radius: 50%; box-shadow: 0 1px 3px rgba(0,0,0,0.2); transition: 0.25s;
+}
+.switch-input:checked + .switch-slider { background: var(--primary); }
+.switch-input:checked + .switch-slider::before { transform: translateX(20px); }
+
+/* 并排与提示 */
+.form-row-inline { display: flex; gap: 16px; flex-wrap: wrap; }
+.form-half { flex: 1; min-width: 180px; }
+.form-half label { display: block; margin-bottom: 8px; font-size: 0.875rem; font-weight: 600; color: #374151; }
+.form-half input { width: 100%; padding: 12px 14px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 0.875rem; }
+.form-half input[type="datetime-local"] { min-width: 0; }
+.form-half input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.12); }
+.field-hint { display: block; font-size: 0.75rem; color: #94A3B8; margin-top: 6px; }
+
+.btn-save { padding: 10px 24px; border-radius: 10px; font-weight: 600; }
 </style>
