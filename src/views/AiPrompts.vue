@@ -1,7 +1,7 @@
 <template>
   <div>
     <h2 class="page-title">AI 提示词配置</h2>
-    <p class="page-hint">自定义各场景的 AI 提示词，支持占位符如 {today}、{birth_date}、{direction}、{item_name} 等</p>
+    <p class="page-hint">自定义各场景的 AI 提示词，支持占位符如 {today}、{birth_date}、{direction}、{item_name}；今日养生还支持 {today_fmt}、{constitution}、{solar_term}、{weather}（当地天气）等</p>
     <template v-if="loading">
       <p>加载中...</p>
     </template>
