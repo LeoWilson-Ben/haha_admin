@@ -5,6 +5,7 @@ import TeacherAudit from '../views/TeacherAudit.vue'
 import ContentList from '../views/ContentList.vue'
 import OrderList from '../views/OrderList.vue'
 import ReportList from '../views/ReportList.vue'
+import AnnouncementList from '../views/AnnouncementList.vue'
 import Config from '../views/Config.vue'
 import AiPrompts from '../views/AiPrompts.vue'
 import Login from '../views/Login.vue'
@@ -24,6 +25,7 @@ const router = createRouter({
     { path: '/content', component: ContentList, meta: { title: '内容审核' } },
     { path: '/orders', component: OrderList, meta: { title: '订单与财务' } },
     { path: '/report', component: ReportList, meta: { title: '举报与风控' } },
+    { path: '/announcements', component: AnnouncementList, meta: { title: '平台公告' } },
     { path: '/ai-prompts', component: AiPrompts, meta: { title: 'AI 提示词' } },
     { path: '/config', component: Config, meta: { title: '系统配置' } },
   ],

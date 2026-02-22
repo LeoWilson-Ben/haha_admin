@@ -15,6 +15,7 @@
           <router-link to="/orders" class="nav-item">财务管理</router-link>
           <router-link to="/report" class="nav-item">举报风控</router-link>
           <div class="nav-divider"></div>
+          <router-link to="/announcements" class="nav-item">平台公告</router-link>
           <router-link to="/ai-prompts" class="nav-item">AI提示词</router-link>
           <router-link to="/config" class="nav-item">系统配置</router-link>
         </nav>
